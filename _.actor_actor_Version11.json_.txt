@@ -1,0 +1,17 @@
+{
+    "actorSpecification": 1,
+    "name": "hotel-rate-parity-checker",
+    "title": "Hotel Rate Parity Checker",
+    "description": "Compares hotel prices on Expedia versus direct booking websites for rate parity discrepancies.",
+    "version": "0.0",
+    "meta": {
+        "templateId": "ai-generated-actor",
+        "generatedBy": "copilot-2026"
+    },
+    "input": "./input_schema.json",
+    "output": "./output_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile"
+}

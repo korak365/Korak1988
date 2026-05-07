@@ -1,0 +1,11 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Output Schema for Hotel Rate Parity Checker",
+    "properties": {
+        "overview": {
+            "type": "string",
+            "title": "Summary Overview",
+            "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+        }
+    }
+}

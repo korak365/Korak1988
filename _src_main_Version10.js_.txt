@@ -1,0 +1,87 @@
+// Import required modules
+import { Actor } from 'apify';
+import { CheerioCrawler, Dataset } from 'crawlee';
+
+await Actor.init();
+
+// Extract input configuration
+const { expediaUrls = [], directUrls = [], maxRequestsPerCrawl = 20 } = (await Actor.getInput()) ?? {};
+
+// Ensure matching Expedia and direct URLs
+if (expediaUrls.length !== directUrls.length) {
+    throw new Error("The number of Expedia URLs and Direct URLs must match.");
+}
+
+const proxyConfiguration = await Actor.createProxyConfiguration();
+
+// Utility function to scrape prices
+const scrapePrice = async ($, platform) => {
+    let price;
+    switch (platform) {
+        case 'expedia':
+            price = $('.price').text().replace(/[^0-9.]/g, ''); // Adjust selector for Expedia's price element
+            break;
+        case 'direct':
+            price = $('.price').text().replace(/[^0-9.]/g, ''); // Adjust selector for direct site price element
+            break;
+        default:
+            throw new Error(`Unsupported platform: ${platform}`);
+    }
+    return parseFloat(price || 0);
+};
+
+// Scraper for Expedia and direct URLs
+const crawler = new CheerioCrawler({
+    proxyConfiguration,
+    maxRequestsPerCrawl,
+    async requestHandler({ request, $, log }) {
+        const { url, userData } = request;
+        const { platform, counterpartUrl } = userData; // Platform: 'expedia' or 'direct'
+
+        log.info(`Scraping ${platform} URL: ${url}`);
+
+        // Scrape data
+        const hotelName = $('h1').text().trim(); // Adjust selector for the hotel name
+        const price = await scrapePrice($, platform);
+
+        // Store results
+        if (platform === 'expedia') {
+            userData.expediaData = { hotelName, expediaPrice: price, expediaUrl: url };
+        } else if (platform === 'direct') {
+            userData.directData = { directPrice: price, directUrl: url };
+        }
+
+        // If both sides scraped, compare
+        if (userData.expediaData && userData.directData) {
+            const { expediaData, directData } = userData;
+
+            const discrepancyFlag = expediaData.expediaPrice !== directData.directPrice;
+            const priceDifference = expediaData.expediaPrice - directData.directPrice;
+
+            await Dataset.pushData({
+                hotelName: expediaData.hotelName || directData.hotelName || '',
+                expediaPrice: expediaData.expediaPrice,
+                directPrice: directData.directPrice,
+                priceDifference,
+                discrepancyFlag,
+                expediaUrl: expediaData.expediaUrl,
+                directUrl: directData.directUrl,
+            });
+        }
+    },
+});
+
+// Schedule crawl jobs
+for (let i = 0; i < expediaUrls.length; i++) {
+    const expediaUrl = expediaUrls[i];
+    const directUrl = directUrls[i];
+
+    await crawler.addRequests([
+        { url: expediaUrl, userData: { platform: 'expedia', counterpartUrl: directUrl } },
+        { url: directUrl, userData: { platform: 'direct', counterpartUrl: expediaUrl } },
+    ]);
+}
+
+await crawler.run();
+
+await Actor.exit();

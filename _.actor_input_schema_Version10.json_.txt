@@ -1,0 +1,35 @@
+{
+    "title": "Input Schema for Hotel Rate Parity Checker",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "expediaUrls": {
+            "title": "Expedia Hotel URLs",
+            "type": "array",
+            "description": "List of Expedia hotel listing URLs to check.",
+            "editor": "requestListSources",
+            "prefill": [
+                {
+                    "url": "https://www.expedia.com/Hotel-Name"
+                }
+            ]
+        },
+        "directUrls": {
+            "title": "Direct Hotel Website URLs",
+            "type": "array",
+            "description": "List of direct booking URLs corresponding to Expedia listings.",
+            "editor": "requestListSources",
+            "prefill": [
+                {
+                    "url": "https://www.hotelwebsite.com"
+                }
+            ]
+        },
+        "maxRequestsPerCrawl": {
+            "title": "Max Pages to Scrape",
+            "type": "integer",
+            "description": "Set the maximum number of pages to scrape per session.",
+            "default": 20
+        }
+    }
+}

@@ -1,0 +1,74 @@
+{
+    "actorSpecification": 1,
+    "fields": {
+        "hotelName": {
+            "type": "string",
+            "title": "Hotel Name"
+        },
+        "expediaPrice": {
+            "type": "number",
+            "title": "Expedia Price"
+        },
+        "directPrice": {
+            "type": "number",
+            "title": "Direct Price"
+        },
+        "priceDifference": {
+            "type": "number",
+            "title": "Price Difference"
+        },
+        "discrepancyFlag": {
+            "type": "boolean",
+            "title": "Rate Discrepancy Flagged"
+        },
+        "expediaUrl": {
+            "type": "string",
+            "title": "Expedia URL"
+        },
+        "directUrl": {
+            "type": "string",
+            "title": "Direct Booking URL"
+        }
+    },
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": ["hotelName", "expediaPrice", "directPrice", "priceDifference", "discrepancyFlag", "expediaUrl", "directUrl"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "hotelName": {
+                        "label": "Hotel Name",
+                        "format": "text"
+                    },
+                    "expediaPrice": {
+                        "label": "Expedia Price",
+                        "format": "number"
+                    },
+                    "directPrice": {
+                        "label": "Direct Price",
+                        "format": "number"
+                    },
+                    "priceDifference": {
+                        "label": "Price Difference",
+                        "format": "number"
+                    },
+                    "discrepancyFlag": {
+                        "label": "Discrepancy",
+                        "format": "boolean"
+                    },
+                    "expediaUrl": {
+                        "label": "Expedia URL",
+                        "format": "link"
+                    },
+                    "directUrl": {
+                        "label": "Direct Booking URL",
+                        "format": "link"
+                    }
+                }
+            }
+        }
+    }
+}
